@@ -1,0 +1,11 @@
+{
+  "languageserver": {
+    "ccls": {
+      "command": "ccls",
+      "rootPatterns": [".ccls", "compile_commands.json", ".vim/", ".git/", ".hg/"],
+      "filetypes": ["c", "cpp", "cuda", "objc", "objcpp"],
+      "initializationOptions": {
+      }
+    }
+  }
+}
