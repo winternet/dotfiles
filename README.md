@@ -2,18 +2,20 @@
 Custom Mappings
 ---------------
 
-Mapping    |  Description                                                                           |   Depends on
------------|----------------------------------------------------------------------------------------|-----------------------
-Ctrl-n     |  search files                                                                          |   fzf, awk
-Ctrl-f     | search contents                                                                        | silver-searcher (Ag)
-gd         | goto definition                                                                        | coc
-gy         | goto type definition                                                                   | coc
-gi         | goto implementation                                                                    | coc
-gw         | goto references                                                                        | coc
-<leader>rn | rename                                                                                 | coc
-<A-F6>     | rename                                                                                 | coc
-<leader>f  | format                                                                                 | coc
-<A-F7>     | callers                                                                                | coc
+Mapping        |  Description                                                                           |   Depends on
+-----------    |----------------------------------------------------------------------------------------|-----------------------
+Ctrl-n         |  search files                                                                          |   fzf, awk
+Ctrl-f         | search contents                                                                        | silver-searcher (Ag)
+gd             | goto definition                                                                        | coc
+gy             | goto type definition                                                                   | coc
+gi             | goto implementation                                                                    | coc
+gw             | goto references                                                                        | coc
+<leader>rn     | rename                                                                                 | coc
+<A-F6>         | rename                                                                                 | coc
+<leader>f      | format                                                                                 | coc
+<A-F7>         | callers                                                                                | coc
+Ctrl-Alt-Left  | cursor position back                                                                   | 
+Ctrl-Alt-Right | cursor position forward                                                                | 
 
 Surrounding
 -----------

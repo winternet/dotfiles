@@ -1,16 +1,13 @@
 call plug#begin()
-Plug 'autozimu/LanguageClient-neovim', {
-    \ 'branch': 'next',
-    \ 'do': 'bash install.sh',
-    \ }
 Plug 'junegunn/fzf', { 'do': 'yes \| ./install' }
 Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-Plug 'majutsushi/tagbar'
-"Plug 'xolox/vim-easytags'
-""Plug 'xolox/vim-misc'
+" ctags plugin
+" Plug 'majutsushi/tagbar'
+" replacement for tagbar
+Plug 'liuchengxu/vista.vim'
 Plug 'easymotion/vim-easymotion'
 Plug 'tpope/vim-surround'
 Plug 'tpope/vim-unimpaired'
@@ -25,58 +22,31 @@ Plug 'sonph/onehalf', {'rtp':'/vim'}
 " icons
 Plug 'ryanoasis/vim-devicons'
 Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
-""""Plug 'neomake/neomake'
 " status line
 Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
-" linting
-""""Plug 'w0rp/ale' "cpp-check
-" code completion
-"Plug 'Shougo/deoplete.nvim', { 'do': ':UpdateRemotePlugins' }
 Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
-"""Plug 'ncm2/ncm2'
-"""Plug 'roxma/nvim-yarp'
-""Plug 'ncm2/ncm2-neoinclude'
-""Plug 'ncm2/ncm2-syntax'
-""Plug 'ncm2/ncm2-tmux'
-""Plug 'ncm2/ncm2-path'
-""Plug 'ncm2/ncm2-bufword'
-" language specific plugins
-" ncm2: go
-"Plug 'ncm2/ncm2-go'
-" ncm2: cpp
-"Plug 'Rip-Rip/clang_complete'
-"Plug 'ncm2/ncm2-pyclang'
-" ncm2: vimscript
-"""Plug 'ncm2/ncm2-vim'
-" ncm2: javascript / typescript
-"""Plug 'ncm2/ncm2-tern', {'do': 'npm install'}
 Plug 'HerringtonDarkholme/yats.vim'
 Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
 Plug 'Quramy/tsuquyomi'
-" ncm2: css
-"""Plug 'ncm2/ncm2-cssomni'
-" ncm2: python
-"""Plug 'ncm2/ncm2-jedi'
-" ncm2: latex
 Plug 'lervag/vimtex'
-" java
-"Plug 'artur-shaik/vim-javacomplete2'
 " html
 Plug 'mattn/emmet-vim'
 Plug 'valloric/MatchTagAlways'
 " git
 Plug 'tpope/vim-fugitive'
 Plug 'mhinz/vim-signify'
+" go
+Plug 'fatih/vim-go', { 'do': ':GoUpdateBinaries' }
 " ruby
 Plug 'vim-ruby/vim-ruby'
 " delimiter
 Plug 'Raimondi/delimitMate'
 " autosave
 Plug '907th/vim-auto-save'
-" debugger
-"Plug 'vim-vdebug/vdebug'
+" python
+Plug 'davidhalter/jedi-vim'
 call plug#end()
 
 "source ~/.config/nvim/sessions.vim
@@ -151,21 +121,15 @@ let NERDTreeIgnore = ['\.pyc$', '\.js.map$']
 "delimitMate
 let delimitMate_expand_cr = 1
 
-"clang cpp options
-"let g:clang_use_library = 1
-"let g:clang_cpp_options = '-std=c++14'
-"let g:clang_user_options=' || exit 0'
-
 " filetypes
 augroup filetypes
     autocmd!
-    autocmd FileType html           setlocal foldmethod=indent foldlevelstart=1 shiftwidth=2 tabstop=2
-    autocmd FileType python         setlocal foldmethod=indent foldlevelstart=1 expandtab shiftwidth=4 softtabstop=4
-    autocmd FileType xml            setlocal shiftwidth=2 tabstop=2
-    autocmd Filetype java           setlocal foldmethod=syntax foldlevel=1 foldlevelstart=1
-    autocmd Filetype javascript     setlocal foldmethod=syntax foldlevel=1 foldlevelstart=1
-    autocmd FileType cpp            setlocal foldmethod=syntax foldlevelstart=1 shiftwidth=2 tabstop=2
-    "autocmd FileType c,cpp nnoremap <buffer> gd :<c-u>call ncm2_pyclang#goto_declaration()<cr>
+    autocmd FileType html           setlocal foldmethod=syntax shiftwidth=2 tabstop=2
+    autocmd FileType python         setlocal foldmethod=syntax expandtab shiftwidth=4 softtabstop=4
+    autocmd FileType xml            setlocal foldmethod=syntax shiftwidth=2 tabstop=2
+    autocmd Filetype java           setlocal foldmethod=syntax
+    autocmd Filetype javascript     setlocal foldmethod=syntax 
+    autocmd FileType cpp            setlocal foldmethod=syntax shiftwidth=2 tabstop=2
     autocmd FileType typescript nmap <buffer> <Leader>T : <C-u>echo tsuquyomi#hint()<CR>
 augroup end
 
@@ -177,11 +141,6 @@ set cmdheight=2
 set updatetime=300
 " always show signcolumns
 set signcolumn=yes
-let g:LanguageClient_serverCommands = {
-  \ 'cpp': ['ccls'],
-\ }
-" Automatically start language servers.
-let g:LanguageClient_autoStart = 1  
 
 """""""""""""function! s:check_back_space() abort
 """""""""""""  let col = col('.') - 1
@@ -195,69 +154,91 @@ let g:LanguageClient_autoStart = 1
 "nmap <silent> [c <Plug>(coc-diagnostic-prev)
 "nmap <silent> ]c <Plug>(coc-diagnostic-next)
 
+nmap <leader>c :Commands<CR>
+
+"go
+autocmd FileType go nmap <leader>b  <Plug>(go-build)
+autocmd FileType go nmap <leader>r  <Plug>(go-run)
+autocmd FileType go map <silent> gy <Plug>(go-def-type)
+autocmd FileType go map <silent> <C-A-O> <Plug>(go-imports)
+autocmd FileType go map <silent> gi <Plug>(coc-implementation)
+autocmd FileType go map <silent> gw <Plug>(coc-references)
+
+
 nnoremap <C-A-Left> <C-O>
 nnoremap <C-A-Right> <C-I>
+
+" coc plugin
+" Use tab for trigger completion with characters ahead and navigate.
+" Use command ':verbose imap <tab>' to make sure tab is not mapped by other plugin.
+inoremap <silent><expr> <TAB>
+      \ pumvisible() ? "\<C-n>" :
+      \ <SID>check_back_space() ? "\<TAB>" :
+      \ coc#refresh()
+inoremap <expr><S-TAB> pumvisible() ? "\<C-p>" : "\<C-h>"
+
+function! s:check_back_space() abort
+  let col = col('.') - 1
+  return !col || getline('.')[col - 1]  =~# '\s'
+endfunction
 
 " Remap keys for coc.vim
 nmap <silent> gd <Plug>(coc-definition)
 nmap <silent> gy <Plug>(coc-type-definition)
 nmap <silent> gi <Plug>(coc-implementation)
-nmap <silent> gw <Plug>(coc-references)
+nmap <silent> gr <Plug>(coc-references)
+
+nnoremap <silent> K :call <SID>show_documentation()<CR>
+function! s:show_documentation()
+  if &filetype == 'vim'
+    execute 'h '.expand('<cword>')
+  else
+    call CocAction('doHover')
+  endif
+endfunction
 
 nmap <silent> gl <Plug>(coc-codelens-action)
 nmap <silent> <A-Enter> <Plug>(coc-codeaction)
 nmap <silent> <C-p> <Plug>(coc-diagnostic-info)
 nmap <silent> <leader>rn <Plug>(coc-rename)
 nmap <silent> <A-F6> <Plug>(coc-rename)
-nnoremap <silent> <C-s> :call LanguageClient_textDocument_documentSymbol()<CR>
 nmap <silent> <leader>f <Plug>(coc-format-selected)
-vnoremap <silent> <leader>f <Plug>(coc-format-selected)
-nmap <silent> <leader>ca :call LanguageClient_textDocument_codeAction()<CR>
-" caller
-nn <silent> gc <Plug>(coc-references)
-" callee
-nn <silent> gC :call LanguageClient#findLocations({'method':'$ccls/call','callee':v:true})<cr>
-nn <silent> <A-F7> :call LanguageClient#findLocations({'method':'$ccls/call'})<cr>
+"vnoremap <silent> <leader>f <Plug>(coc-format-selected)
+" Remap for do codeAction of current line
+nmap <leader>ac  <Plug>(coc-codeaction)
+" Fix autofix problem of current line
+nmap <leader>qf  <Plug>(coc-fix-current)
 
-" Remap keys for gotos (LanguageClient-neovim)
-nmap <silent> gd :call LanguageClient_textDocument_definition()<CR>
-nmap <silent> gy :call LanguageClient_textDocument_typeDefinition()<CR>
-nmap <silent> gi :call LanguageClient_textDocument_implementation()<CR>
-nmap <silent> gw :call LanguageClient_textDocument_references()<CR>
+" Using CocList
+" Show all diagnostics
+nnoremap <silent> <space>a  :<C-u>CocList diagnostics<cr>
+" Manage extensions
+nnoremap <silent> <space>e  :<C-u>CocList extensions<cr>
+" Show commands
+nnoremap <silent> <space>c  :<C-u>CocList commands<cr>
+" Find symbol of current document
+nnoremap <silent> <space>o  :<C-u>CocList outline<cr>
+" Search workspace symbols
+nnoremap <silent> <space>s  :<C-u>CocList -I symbols<cr>
+" Do default action for next item.
+nnoremap <silent> <space>j  :<C-u>CocNext<CR>
+" Do default action for previous item.
+nnoremap <silent> <space>k  :<C-u>CocPrev<CR>
+" Resume latest coc list
+nnoremap <silent> <space>p  :<C-u>CocListResume<CR>
 
-nmap <silent> <C-p> :call LanguageClient_textDocument_hover()<CR>
-nmap <silent> <leader>rn :call LanguageClient_textDocument_rename()<CR>
-nmap <silent> <A-F6> :call LanguageClient_textDocument_rename()<CR>
-nnoremap <silent> <C-s> :call LanguageClient_textDocument_documentSymbol()<CR>
-nmap <silent> <leader>f :call LanguageClient_textDocument_formatting()<CR>
-vnoremap <silent> <leader>f :call LanguageClient_textDocument_rangeFormatting()<CR>
-nmap <silent> <leader>ca :call LanguageClient_textDocument_codeAction()<CR>
-" caller
-nn <silent> gc :call LanguageClient#findLocations({'method':'$ccls/call'})<cr>
-" callee
-nn <silent> gC :call LanguageClient#findLocations({'method':'$ccls/call','callee':v:true})<cr>
-nn <silent> <A-F7> :call LanguageClient#findLocations({'method':'$ccls/call'})<cr>
-
-" ncm2
-"let g:ncm2_pyclang#library_path = '/usr/lib/libclang.so'
-"let g:ncm2_pyclang#library_path = '/usr/lib/libclang.so.6'
-"let g:ncm2_pyclang#database_path = [
-"            \ 'compile_commands.json',
-"            \ 'build/compile_commands.json'
-"            \ ]
-"let g:ncm2_pyclang#source = {'complete_length': -1}
-""let g:ncm2#complete_delay=180
-""
-"let g:ale_c_build_dir_names = ['build', 'release', 'debug']
-"let g:ale_cpp_clangtidy_checks = ['*','-fuchsia-default-arguments', '-google-readability-todo']
-"let g:ale_completion_enabled = 1
-" In ~/.vim/vimrc, or somewhere similar.
 let g:ale_linters = {
 \   'javascript': ['eslint'],
 \   'cpp': [],
 \}
-"let g:deoplete#enable_at_startup = 1
 
 " AutoSave
 let g:auto_save = 1  " enable AutoSave on Vim startup
 let g:auto_save_silent = 1  " do not display the auto-save notification
+
+" Vista (tagbar)
+let g:vista#renderer#enable_icon = 0
+let g:vista_default_executive = 'coc'
+let g:vista_icon_indent = ["▸ ", ""]
+let g:vista_fzf_preview = ['right:50%']
+let g:vista_sidebar_width = 40

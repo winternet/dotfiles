@@ -5,7 +5,16 @@
       "rootPatterns": [".ccls", "compile_commands.json", ".vim/", ".git/", ".hg/"],
       "filetypes": ["c", "cpp", "cuda", "objc", "objcpp"],
       "initializationOptions": {
+        "cache": {
+           "directory": ".ccls-cache"
+         }
       }
+    },
+    "golang": {
+      "command": "bingo",
+      "args": ["--diagnostics-style=instant --enhance-signature-help --format-style=goimports"],
+      "rootPatterns": ["go.mod", ".vim/", ".git/", ".hg/"],
+      "filetypes": ["go"]
     }
   }
 }

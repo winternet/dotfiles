@@ -25,7 +25,10 @@ noremap <c-t> :Tags<CR>
 " nerdtree
 map <F2> :NERDTreeToggle<CR>
 " tagbar
-map <F3> :TagbarToggle<CR>
+" map <F3> :TagbarToggle<CR>
+map <F3> :Vista!!<CR>
+map <C-G> :Vista finder<CR>
+"map <F3> :Vista coc<CR>
 
 " source configuration
 noremap <leader>sc <esc>:source $MYVIMRC<CR>
