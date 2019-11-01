@@ -3,7 +3,6 @@ Plug 'junegunn/fzf', { 'do': 'yes \| ./install' }
 Plug 'junegunn/fzf.vim'
 Plug 'scrooloose/nerdtree', { 'on': 'NERDTreeToggle' }
 Plug 'Xuyuanp/nerdtree-git-plugin'
-Plug 'tiagofumo/vim-nerdtree-syntax-highlight'
 " ctags plugin
 " Plug 'majutsushi/tagbar'
 " replacement for tagbar
@@ -27,9 +26,9 @@ Plug 'vim-airline/vim-airline'
 Plug 'vim-airline/vim-airline-themes'
 Plug 'neoclide/coc.nvim', {'tag': '*', 'do': { -> coc#util#install()}}
 Plug 'HerringtonDarkholme/yats.vim'
-Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
+"Plug 'mhartington/nvim-typescript', {'do': './install.sh'}
 Plug 'Shougo/vimproc.vim', {'do' : 'make'}
-Plug 'Quramy/tsuquyomi'
+" Plug 'Quramy/tsuquyomi'
 Plug 'lervag/vimtex'
 " html
 Plug 'mattn/emmet-vim'
@@ -242,3 +241,27 @@ let g:vista_default_executive = 'coc'
 let g:vista_icon_indent = ["▸ ", ""]
 let g:vista_fzf_preview = ['right:50%']
 let g:vista_sidebar_width = 40
+
+" Fuzzy Find (FZF)
+let $FZF_DEFAULT_COMMAND = 'ag -g ""'  " ignore .gitignore
+
+" Highlight duplicated lines
+function! HighlightRepeats() range
+  let lineCounts = {}
+  let lineNum = a:firstline
+  while lineNum <= a:lastline
+    let lineText = getline(lineNum)
+    if lineText != ""
+      let lineCounts[lineText] = (has_key(lineCounts, lineText) ? lineCounts[lineText] : 0) + 1
+    endif
+    let lineNum = lineNum + 1
+  endwhile
+  exe 'syn clear Repeat'
+  for lineText in keys(lineCounts)
+    if lineCounts[lineText] >= 2
+      exe 'syn match Repeat "^' . escape(lineText, '".\^$*[]') . '$"'
+    endif
+  endfor
+endfunction
+
+command! -range=% HighlightRepeats <line1>,<line2>call HighlightRepeats()
