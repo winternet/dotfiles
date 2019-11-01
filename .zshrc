@@ -95,3 +95,6 @@ alias vim="nvim"
 export PATH=~/.npm-global/bin:$PATH
 
 export PATH="$HOME/.yarn/bin:$HOME/.config/yarn/global/node_modules/.bin:$PATH"
+export GOPATH="$HOME/workspace/go"
+export PATH="$HOME/workspace/go/bin:$PATH"
+export FZF_DEFAULT_COMMAND='ag -g ""'
